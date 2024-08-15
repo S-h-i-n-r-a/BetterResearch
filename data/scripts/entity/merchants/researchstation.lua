@@ -19,12 +19,10 @@ function ResearchStation.onClickResearch() -- Override
             local amount = optItemIndices[item.index] or 0
             amount = amount + 1
             optItemIndices[item.index] = amount
-			
-			items = items + 1
         end
     end
 
-    if items >= 3 then
+    if items == 3 then
         invokeServerFunction("research", reqItemIndices, optItemIndices)
     end
 end
@@ -58,7 +56,7 @@ function ResearchStation.research(reqItemIndices, optItemIndices) -- Override
         end
     end
 	
-	for index, amount in pairs(optItems) do
+	for index, amount in pairs(optItemIndices) do
         local item = buyer:getInventory():find(index)
         local has = buyer:getInventory():amount(index)
 
@@ -90,7 +88,13 @@ function ResearchStation.research(reqItemIndices, optItemIndices) -- Override
     local result = ResearchStation.transform(allItems, reqItems, optItems)
 
     if result then
-        for index, amount in pairs(itemIndices) do
+        for index, amount in pairs(reqItemIndices) do
+            for i = 1, amount do
+                buyer:getInventory():take(index)
+            end
+        end
+		
+		for index, amount in pairs(optItemIndices) do
             for i = 1, amount do
                 buyer:getInventory():take(index)
             end
@@ -140,6 +144,13 @@ function ResearchStation.transform(allItems, reqItems, optItems) -- Override
 
     local result
     local rarities = ResearchStation.getRarityProbabilities(allItems)
+	print(string.format("%s items in list", #allItems))
+	print(string.format("%s required", #reqItems))
+	print(string.format("%s optional", #optItems))
+	for rarity, chance in pairs(rarities) do
+		print(string.format("rarity %s = %s/1", rarity, chance))
+	end
+	
     local types = ResearchStation.getTypeProbabilities(reqItems, "type")
 
     local itemType = selectByWeight(random(), types)

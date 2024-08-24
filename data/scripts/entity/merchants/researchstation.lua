@@ -144,12 +144,6 @@ function ResearchStation.transform(allItems, reqItems, optItems) -- Override
 
     local result
     local rarities = ResearchStation.getRarityProbabilities(allItems)
-	print(string.format("%s items in list", #allItems))
-	print(string.format("%s required", #reqItems))
-	print(string.format("%s optional", #optItems))
-	for rarity, chance in pairs(rarities) do
-		print(string.format("rarity %s = %s/1", rarity, chance))
-	end
 	
     local types = ResearchStation.getTypeProbabilities(reqItems, "type")
 
@@ -176,7 +170,7 @@ function ResearchStation.transform(allItems, reqItems, optItems) -- Override
 
         local generator = SectorTurretGenerator()
         generator.maxVariations = 10
-        result = generator:generate(x, y, -5, rarity, weaponType, material)
+        result = generator:generate(x, y, 0, rarity, weaponType, material)
 
         if itemType == InventoryItemType.Turret then
             result = InventoryTurret(result)
